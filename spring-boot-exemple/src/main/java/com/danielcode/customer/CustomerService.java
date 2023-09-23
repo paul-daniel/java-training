@@ -1,7 +1,7 @@
 package com.danielcode.customer;
 
-import com.danielcode.Main;
-import com.danielcode.exception.ResourceNotFound;
+import com.danielcode.exception.ResourceAlreadyExistException;
+import com.danielcode.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +16,35 @@ public class CustomerService {
         this.customerDao = customerDao;
      }
 
-    List<Customer> getAllCustomers(){
+    public List<Customer> getAllCustomers(){
         return customerDao.selectAllCustomers();
     }
 
-    Customer getCustomerById(Integer id){
+    public Customer getCustomerById(Integer id){
         Optional<Customer> customer = customerDao.selectCustomerById(id);
-        return customer.orElseThrow(() -> new ResourceNotFound("Customer with id [%s] does not exist".formatted(id)));
+        return customer.orElseThrow(() -> new ResourceNotFoundException("Customer with id [%s] does not exist".formatted(id)));
+    }
+
+    public void addCustomer(CustomerRegistrationRequest customerRegistrationRequest){
+        // check if email exist
+        if(customerDao.existsPersonWithEmail(customerRegistrationRequest.email())){
+            throw new ResourceAlreadyExistException("Customer with provided email already exist");
+        }
+        customerDao.insertCustomer(new Customer(customerRegistrationRequest));
+    }
+
+    public void removeCustomer(Integer id){
+        if(!customerDao.existsCustomerWithId(id)){
+            throw new ResourceNotFoundException("Customer with id [%s] does not exist".formatted(id));
+        }
+        customerDao.deleteCustomerById(id);
+    }
+
+    public void updateCustomer(Integer id, CustomerRegistrationRequest customerRegistrationRequest){
+        if(!customerDao.existsCustomerWithId(id)){
+            throw new ResourceNotFoundException("Customer with id [%s] does not exist".formatted(id));
+        }
+        Customer customer = new Customer(id, customerRegistrationRequest);
+        customerDao.updateCustomerInfos(customer);
     }
 }

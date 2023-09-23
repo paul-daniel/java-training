@@ -38,14 +38,27 @@ public class Customer {
     public Customer(Integer id, String name, String email, Integer age) {
         this.id = id;
         this.name = name;
-        this.email = email;
+        this.email = email.toLowerCase();
         this.age = age;
     }
 
     public Customer(String name, String email, Integer age) {
         this.name = name;
-        this.email = email;
+        this.email = email.toLowerCase();
         this.age = age;
+    }
+
+    public Customer(CustomerRegistrationRequest customerRegistrationRequest){
+        this.name = customerRegistrationRequest.name();
+        this.age = customerRegistrationRequest.age();
+        this.email = customerRegistrationRequest.email().toLowerCase();
+    }
+
+    public Customer(Integer id, CustomerRegistrationRequest customerRegistrationRequest){
+        this.id = id;
+        this.name = customerRegistrationRequest.name();
+        this.age = customerRegistrationRequest.age();
+        this.email = customerRegistrationRequest.email().toLowerCase();
     }
 
     public Integer getId() {

@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+  db:  # Changed the service name to 'postgres'
+    container_name: postgres  # Explicitly set the container name to 'postgres'
+    image: postgres
+    environment:
+      POSTGRES_USER: danielcode
+      POSTGRES_PASSWORD: password
+      PG_DATA: /data/postgres  # Changed the database name to 'postgres'
+    ports:
+      - "5332:5432"
+    volumes:
+      - db:/data/postgres
+    networks:
+      - db
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:

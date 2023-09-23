@@ -1,28 +1,27 @@
 package com.danielcode.customer;
 
 import com.danielcode.Main;
+import com.danielcode.exception.ResourceNotFound;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CustomerService {
-    private final CustomerDataAccessService customerDataAccessService;
-    private final Main.Foo foo;
+    private final CustomerDao customerDao;
 
-    public CustomerService(CustomerDataAccessService customerDataAccessService, Main.Foo foo) {
-        this.customerDataAccessService = customerDataAccessService;
-        this.foo = foo;
+    public CustomerService(@Qualifier("jpa") CustomerDao customerDao) {
+        this.customerDao = customerDao;
      }
 
     List<Customer> getAllCustomers(){
-        return customerDataAccessService.selectAllCustomers();
+        return customerDao.selectAllCustomers();
     }
 
     Customer getCustomerById(Integer id){
-        Optional<Customer> customer = customerDataAccessService.selectCustomerById(id);
-        return customer.orElseThrow(() -> new IllegalArgumentException("Customer does not exist"));
+        Optional<Customer> customer = customerDao.selectCustomerById(id);
+        return customer.orElseThrow(() -> new ResourceNotFound("Customer with id [%s] does not exist".formatted(id)));
     }
 }

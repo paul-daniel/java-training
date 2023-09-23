@@ -22,14 +22,7 @@ public class CustomerController {
     }
 
     @RequestMapping(path = "api/v1/customers/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Object> getCustomerById(@PathVariable("id") Integer id){
-        try{
-            Customer customer = customerService.getCustomerById(id);
-            return new ResponseEntity<>(customer, HttpStatus.OK);
-        }catch(IllegalArgumentException e){
-            HashMap<String, String> errorMap = new HashMap<>();
-            errorMap.put("error", e.getMessage());
-            return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
-        }
+    public Customer getCustomerById(@PathVariable("id") Integer id){
+        return customerService.getCustomerById(id);
     }
 }

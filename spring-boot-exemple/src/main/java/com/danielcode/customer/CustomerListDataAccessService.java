@@ -1,7 +1,6 @@
 package com.danielcode.customer;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-public class CustomerDataAccessService implements CustomerDao{
+public class CustomerListDataAccessService implements CustomerDao{
 
     private static List<Customer> customers;
 

@@ -1,5 +1,6 @@
 package com.danielcode.customer;
 
+import com.danielcode.exception.NoChangeDetectedException;
 import com.danielcode.exception.ResourceAlreadyExistException;
 import com.danielcode.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,11 +41,39 @@ public class CustomerService {
         customerDao.deleteCustomerById(id);
     }
 
-    public void updateCustomer(Integer id, CustomerRegistrationRequest customerRegistrationRequest){
+    public void updateCustomer(Integer id, CustomerRegistrationRequest request){
+        // Make changes only when the need to is detected
         if(!customerDao.existsCustomerWithId(id)){
             throw new ResourceNotFoundException("Customer with id [%s] does not exist".formatted(id));
         }
-        Customer customer = new Customer(id, customerRegistrationRequest);
-        customerDao.updateCustomerInfos(customer);
+
+        Customer customer = this.getCustomerById(id);
+        boolean changes = false;
+
+        if(!customer.getEmail().equals(request.email())){
+            if(customerDao.existsPersonWithEmail(request.email())){
+                throw new ResourceAlreadyExistException("email already taken");
+            }else{
+                customer.setEmail(request.email());
+                changes = true;
+            }
+
+        }
+
+        if(!customer.getName().equals(request.name())){
+            customer.setName(request.name());
+            changes = true;
+        }
+
+        if(!customer.getAge().equals(request.age())){
+            customer.setAge(request.age());
+            changes = true;
+        }
+
+        if(changes){
+            customerDao.updateCustomerInfos(customer);
+        }else{
+            throw new NoChangeDetectedException("No change detected");
+        }
     }
 }

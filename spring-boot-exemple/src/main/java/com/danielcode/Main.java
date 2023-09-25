@@ -2,14 +2,13 @@ package com.danielcode;
 
 import com.danielcode.customer.Customer;
 import com.danielcode.customer.CustomerRepository;
+import com.github.javafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.*;
 
@@ -23,13 +22,27 @@ public class Main {
 //        System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
     }
 
+    public List<Customer> generateRandomCustomers(int number){
+        Faker faker = new Faker();
+        List<Customer> customers = new ArrayList<>();
+        for (int i = 0; i < number ; i++){
+            String firstname = faker.name().firstName();
+            String lastname = faker.name().lastName();
+            customers.add(
+                    new Customer(
+                            "%s %s".formatted(firstname, lastname),
+                            "%s.%s@gmail.com".formatted(firstname.toLowerCase(), lastname.toLowerCase()),
+                            faker.number().numberBetween(9, 99)
+                    )
+            );
+        }
+        return customers;
+    }
+
     @Bean
     CommandLineRunner runner(CustomerRepository customerRepository){
         return args -> {
-            Customer alex = new Customer("Alex", "alex@gmail.com", 21);
-            Customer claude = new Customer("Claude", "claude@gmail.com", 25);
-            List<Customer> customers = List.of(alex, claude);
-            customerRepository.saveAll(customers);
+            customerRepository.saveAll(generateRandomCustomers(2));
         };
     }
 }

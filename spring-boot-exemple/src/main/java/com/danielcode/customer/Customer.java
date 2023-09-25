@@ -1,21 +1,29 @@
 package com.danielcode.customer;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.Objects;
 
 @Entity
+@Table(
+        name = "customer",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "customer_email_unique",
+                        columnNames = "email"
+                )
+        }
+)
 public class Customer {
     @Id
     @SequenceGenerator(
-            name="customer_id_sequence",
-            sequenceName="customer_id_sequence"
+            name="customer_id_seq",
+            sequenceName="customer_id_seq",
+            allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "customer_id_sequence"
+            generator = "customer_id_seq"
     )
     private Integer id;
 
@@ -25,7 +33,8 @@ public class Customer {
     private String name;
 
     @Column(
-            nullable = false
+            nullable = false,
+            unique = true
     )
     private String email;
 

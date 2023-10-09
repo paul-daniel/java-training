@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+  db:  # Changed the service name to 'postgres'
+    container_name: cardShieldDb  # Explicitly set the container name to 'cardShieldDab'
+    image: postgres
+    environment:
+      POSTGRES_USER: paulDaniel
+      POSTGRES_PASSWORD: password
+      PG_DATA: /data/cardShield  # Changed the database name to 'postgres'
+    ports:
+      - "5333:5432"
+    volumes:
+      - db:/data/postgres
+    networks:
+      - db
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:

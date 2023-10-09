@@ -1,0 +1,12 @@
+server:
+    port: 8080
+    error:
+        include-message: always
+
+spring:
+  main:
+      web-application-type: servlet
+  datasource:
+      url: jdbc:postgresql://localhost:5332/customer
+      username: paulDaniel
+      password: password
